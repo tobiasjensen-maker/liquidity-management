@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cash Flow Intelligence — Vision</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700&display=swap');
+  :root {
+    --accent:#F5A524; --ink:#121530; --ink-sec:#4E5267;
+    --peach:#FFF4E6; --lavender:#F3EFFF; --blue-bg:#E4EDFB; --card:#FFFFFF;
+    --line:rgba(18,21,48,.08);
+    --purple-bg:#EEE8FB; --purple-tx:#6B4FD7;
+    --blue-tx:#3B5BDB; --green-bg:#E3F4E8; --green-tx:#1F8A4C;
+    --amber-bg:#FEEFDD; --amber-tx:#F5A524;
+    --R:12px; --Rs:6px; --Rl:24px;
+    --fd:'DM Serif Display',Georgia,serif; --fb:'Inter',system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:100%;height:100%;overflow:hidden;background:#EDEDF0;font-family:var(--fb);-webkit-font-smoothing:antialiased}
+
+  /* ── PAGE LAYOUT ── */
+  .page{display:grid;grid-template-rows:1fr auto;height:100%;padding:0}
+  .frame-wrap{position:relative;padding:28px 40px 16px;min-height:0}
+  .frame{width:100%;height:100%;border-radius:var(--Rl);overflow:hidden;position:relative;box-shadow:0 8px 40px rgba(18,21,48,.10),0 2px 12px rgba(18,21,48,.06)}
+
+  /* ── ARROWS ── */
+  .arr{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;border:1px solid rgba(0,0,0,.05);background:rgba(255,255,255,.92);box-shadow:0 2px 10px rgba(0,0,0,.07);cursor:pointer;font-size:22px;color:#888;display:flex;align-items:center;justify-content:center;z-index:30;transition:all .2s;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+  .arr:hover{background:#fff;color:var(--ink);box-shadow:0 4px 16px rgba(0,0,0,.12)}
+  .arr--l{left:19px}
+  .arr--r{right:19px}
+
+  /* ── TAB BAR ── */
+  .tabs{display:flex;align-items:center;justify-content:center;gap:4px;padding:4px 24px 14px;overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{display:flex;align-items:center;gap:5px;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;color:var(--ink-sec);cursor:pointer;white-space:nowrap;transition:all .2s;border:none;background:0;font-family:var(--fb)}
+  .tab:hover{background:rgba(18,21,48,.05)}
+  .tab.on{background:var(--ink);color:#fff;font-weight:600}
+  .tab .n{font-size:10.5px;font-weight:600;opacity:.45}
+  .tab.on .n{opacity:.55}
+
+  /* ── SLIDES ── */
+  .s{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:7% 8%;opacity:0;pointer-events:none;transition:opacity .4s,transform .4s;transform:translateX(24px);overflow-y:auto}
+  .s.on{opacity:1;pointer-events:auto;transform:translateX(0)}
+  .s.out{opacity:0;transform:translateX(-24px)}
+
+  /* ── SHARED TYPO ── */
+  .st{font-family:var(--fd);font-size:clamp(22px,2.6vw,34px);line-height:1.18;color:var(--ink);margin-bottom:10px}
+  .ss{font-size:clamp(12.5px,1.05vw,15px);color:var(--ink-sec);line-height:1.65;max-width:660px}
+  .pill{display:inline-flex;align-items:center;gap:7px;padding:5px 15px;border-radius:20px;font-size:11.5px;font-weight:600;margin-bottom:16px;width:fit-content}
+  .pill-d{width:7px;height:7px;border-radius:50%}
+  .tag{display:inline-block;padding:3px 10px;border-radius:var(--Rs);font-size:10.5px;font-weight:600}
+  .lbl{font-size:10.5px;font-weight:600;color:var(--ink-sec);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+
+  /* ═══ S1 COVER ═══ */
+  .s1{background:radial-gradient(ellipse at 80% 10%,rgba(245,165,36,.11) 0%,transparent 50%),radial-gradient(ellipse at 15% 90%,rgba(107,79,215,.09) 0%,transparent 50%),var(--ink)}
+  .s1 .pill-w{display:inline-flex;align-items:center;gap:8px;padding:7px 18px;border-radius:20px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08);font-size:13px;font-weight:500;color:rgba(255,255,255,.65);margin-bottom:28px}
+  .s1 .pill-w .d{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+  .s1 h1{font-family:var(--fd);font-size:clamp(36px,4.5vw,62px);color:#fff;line-height:1.08;margin-bottom:20px}
+  .s1 h1 em{font-style:normal;color:var(--accent)}
+  .s1 p{font-size:clamp(14px,1.15vw,17px);color:rgba(255,255,255,.42);line-height:1.7;max-width:600px}
+
+  /* ═══ S2 WHY ═══ */
+  .s2{background:#fff}
+  .callout{background:var(--lavender);border-left:4px solid var(--purple-tx);border-radius:0 var(--R) var(--R) 0;padding:16px 22px;margin:18px 0;max-width:720px;font-family:var(--fd);font-size:clamp(11.5px,.95vw,13.5px);color:var(--purple-tx);line-height:1.65;font-style:italic}
+  .ev-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px;max-width:720px}
+  .ev{display:flex;gap:10px;align-items:flex-start}
+  .ev-i{width:30px;height:30px;border-radius:8px;background:var(--peach);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+  .ev b{font-size:12px;color:var(--ink);display:block}
+  .ev span{font-size:11px;color:var(--ink-sec);line-height:1.45}
+
+  /* ═══ S3 REALITY ═══ */
+  .s3{background:#F8F8FB}
+  .rl{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:18px}
+  .il{display:flex;flex-direction:column;gap:7px}
+  .ic{background:var(--card);border-radius:var(--Rs);padding:10px 14px;box-shadow:0 1px 5px rgba(18,21,48,.05)}
+  .ic-t{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+  .ic-n{font-weight:700;font-size:12px;color:var(--ink)}
+  .ic-d{font-size:10.5px;color:var(--ink-sec);line-height:1.4}
+  .prs{display:flex;flex-direction:column;gap:12px}
+  .pr{border-radius:var(--R);padding:18px;background:var(--card);box-shadow:0 2px 10px rgba(18,21,48,.05);border-top:3px solid transparent}
+  .pr--g{border-top-color:var(--green-tx)}
+  .pr--a{border-top-color:var(--accent)}
+  .pr h4{font-family:var(--fd);font-size:15px;color:var(--ink);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .pr p{font-size:11.5px;color:var(--ink-sec);line-height:1.65}
+
+  /* ═══ S4 CONVERGENCE ═══ */
+  .s4{background:#fff}
+  .stg-row{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:stretch;margin-top:22px}
+  .stg{border-radius:var(--R);padding:18px;display:flex;flex-direction:column;gap:9px;box-shadow:0 2px 10px rgba(18,21,48,.05)}
+  .stg-b{display:inline-flex;padding:3px 10px;border-radius:var(--Rs);font-size:10px;font-weight:700;width:fit-content}
+  .stg-l{font-family:var(--fd);font-size:clamp(13px,1.2vw,17px);color:var(--ink)}
+  .ab{background:var(--card);border-radius:var(--Rs);padding:9px 11px;box-shadow:0 1px 4px rgba(18,21,48,.05)}
+  .ab b{font-weight:700;font-size:10.5px;display:block;margin-bottom:2px}
+  .ab span{font-size:9.5px;color:var(--ink-sec);line-height:1.4}
+  .si{display:flex;flex-direction:column;gap:4px}
+  .si div{background:rgba(255,255,255,.5);border-radius:var(--Rs);padding:4px 10px;font-size:10.5px;color:var(--ink)}
+  .stg-f{font-size:10px;color:var(--ink-sec);font-style:italic;line-height:1.45;margin-top:auto}
+  .stg-arr{display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:18px;padding:0 5px}
+
+  /* ═══ S5 TIMELINE ═══ */
+  .s5{background:#fff}
+  .tl{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}
+  .tc{background:var(--card);border-radius:var(--R);padding:16px;box-shadow:0 2px 10px rgba(18,21,48,.05);display:flex;flex-direction:column;gap:7px;border-top:3px solid transparent}
+  .tc-p{font-weight:700;font-size:10.5px;color:var(--ink-sec)}
+  .tc-t{font-family:var(--fd);font-size:13.5px;color:var(--ink)}
+  .tc-b{font-size:10.5px;color:var(--ink-sec);line-height:1.55;flex:1}
+  .th{border-radius:var(--Rs);padding:8px 10px;margin-top:auto}
+  .th-l{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+  .th-v{font-size:11.5px;font-weight:700;color:var(--ink);margin-top:2px}
+
+  /* ═══ S6 RISKS ═══ */
+  .s6{background:#F8F8FB}
+  .rlay{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:18px}
+  .rg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .rc{background:var(--card);border-radius:var(--R);padding:14px;box-shadow:0 2px 8px rgba(18,21,48,.04);border-top:3px solid transparent;display:flex;flex-direction:column;gap:5px}
+  .rc h5{font-family:var(--fd);font-size:12.5px;color:var(--ink)}
+  .rc p{font-size:10.5px;color:var(--ink-sec);line-height:1.45;flex:1}
+  .rc-m{border-radius:var(--Rs);padding:6px 9px;font-size:9.5px;line-height:1.35}
+  .qp{background:var(--card);border-radius:var(--R);padding:18px;box-shadow:0 2px 10px rgba(18,21,48,.05)}
+  .qp h4{font-family:var(--fd);font-size:14px;color:var(--ink);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .qi{display:flex;gap:9px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line)}
+  .qi:last-child{border-bottom:0}
+  .qi-d{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:4px}
+  .qi p{font-size:11.5px;color:var(--ink-sec);line-height:1.45}
+
+  /* ═══ S7 CLOSING ═══ */
+  .s7{background:radial-gradient(ellipse at 80% 20%,rgba(245,165,36,.08) 0%,transparent 50%),radial-gradient(ellipse at 20% 80%,rgba(107,79,215,.08) 0%,transparent 50%),var(--ink)}
+  .s7 h2{font-family:var(--fd);font-size:clamp(24px,3vw,38px);color:#fff;margin-bottom:10px}
+  .s7>p{font-size:clamp(12.5px,1.05vw,15px);color:rgba(255,255,255,.42);line-height:1.65;max-width:560px;margin-bottom:26px}
+  .ns{display:flex;flex-direction:column;gap:9px;max-width:600px}
+  .ni{display:flex;gap:14px;align-items:center;background:rgba(255,255,255,.05);border-radius:var(--R);padding:13px 16px;border:1px solid rgba(255,255,255,.06)}
+  .ni-i{font-size:18px;flex-shrink:0}
+  .ni b{font-size:12px;color:var(--accent);display:block;margin-bottom:1px}
+  .ni span{font-size:11px;color:rgba(255,255,255,.42);line-height:1.4}
+  .cta{display:inline-flex;align-items:center;gap:8px;margin-top:22px;padding:10px 20px;background:var(--accent);color:var(--ink);font-weight:700;font-size:13px;border-radius:var(--R);text-decoration:none;transition:transform .2s,box-shadow .2s;width:fit-content}
+  .cta:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(245,165,36,.3)}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="frame-wrap">
+    <button class="arr arr--l" onclick="go(-1)">&#x2039;</button>
+    <button class="arr arr--r" onclick="go(1)">&#x203A;</button>
+
+    <div class="frame" id="deck">
+
+      <!-- S1 COVER -->
+      <div class="s s1 on" data-s="0">
+        <h1>Cash Flow<br><em>Intelligence.</em></h1>
+        <p>AI-Driven Discovery &amp; Prototyping workshop</p>
+      </div>
+
+      <!-- S2 WHY -->
+      <div class="s s2" data-s="1">
+        <span class="pill" style="background:var(--peach);color:var(--amber-tx)"><span class="pill-d" style="background:var(--accent)"></span>Starting with the customer</span>
+        <div class="st">Small business owners deserve to see<br>what's coming &mdash; not just what happened</div>
+        <div class="ss">40+ monthly dashboard visits reveal intense demand for financial clarity &mdash; but today's view is a rear-view mirror.</div>
+        <div class="lbl">Research grounded in SME behaviour</div>
+        <div class="ev-grid">
+          <div class="ev"><div class="ev-i">&#x1F4C8;</div><div><b>40+ views/month</b><span>Users obsessively check the Company Overview Dashboard</span></div></div>
+          <div class="ev"><div class="ev-i">&#x1F514;</div><div><b>Reactive decisions</b><span>No forward visibility leads to late penalties and surprises</span></div></div>
+          <div class="ev"><div class="ev-i">&#x1F4C4;</div><div><b>Invoice anxiety</b><span>Overdue invoices create constant cash flow stress</span></div></div>
+          <div class="ev"><div class="ev-i">&#x1F4B0;</div><div><b>Missed savings</b><span>Early payment discounts go unclaimed</span></div></div>
+        </div>
+      </div>
+
+      <!-- S3 REALITY CHECK -->
+      <div class="s s3" data-s="2">
+        <div class="lbl">Our cash flow bets, today</div>
+        <div class="st" style="font-size:clamp(19px,2.2vw,28px)">5 use cases identified &mdash; each promising,<br>each living in its own lane.</div>
+        <div class="rl">
+          <div class="il">
+            <div class="ic"><div class="ic-t"><span class="tag" style="background:var(--green-bg);color:var(--green-tx)">Forecasting</span><span class="ic-n">Daily Cash Position</span></div><div class="ic-d">30-day projection with inflection point alerts</div></div>
+            <div class="ic"><div class="ic-t"><span class="tag" style="background:var(--blue-bg);color:var(--blue-tx)">Automation</span><span class="ic-n">Overdue Invoice Alerts</span></div><div class="ic-d">One-click reminders for overdue invoices</div></div>
+            <div class="ic"><div class="ic-t"><span class="tag" style="background:var(--purple-bg);color:var(--purple-tx)">Agentic</span><span class="ic-n">Proactive Shortfall Warnings</span></div><div class="ic-d">AI-predicted cash shortfalls with suggested actions</div></div>
+            <div class="ic"><div class="ic-t"><span class="tag" style="background:var(--amber-bg);color:var(--amber-tx)">Advisory</span><span class="ic-n">AO Advisory Dashboard</span></div><div class="ic-d">Client-facing cash flow reports for accountants</div></div>
+            <div class="ic"><div class="ic-t"><span class="tag" style="background:var(--green-bg);color:var(--green-tx)">Automation</span><span class="ic-n">Early Payment Discounts</span></div><div class="ic-d">Surface supplier discount opportunities</div></div>
+          </div>
+          <div class="prs">
+            <div class="pr pr--g"><h4>&#x2705; The promise</h4><p>Every use case addresses a real pain point. Business owners want to see what's coming. Accountants want advisory tools. The data already exists in e-conomic &mdash; invoices, payment patterns, recurring expenses, bank balances.</p></div>
+            <div class="pr pr--a"><h4>&#x26A0;&#xFE0F; The reality</h4><p>The customer still sees only historical data. No one has validated whether users will trust and act on AI recommendations &mdash; not just view them. The riskiest assumption isn't technical feasibility; it's behavioural adoption.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S4 CONVERGENCE -->
+      <div class="s s4" data-s="3">
+        <div class="st" style="font-size:clamp(19px,2.2vw,28px)">From reactive accounting to predictive intelligence</div>
+        <div class="ss">A three-stage evolution &mdash; each building on the last, each unlocking new value.</div>
+        <div class="stg-row">
+          <div class="stg" style="background:var(--blue-bg)">
+            <span class="stg-b" style="background:rgba(59,91,219,.1);color:var(--blue-tx)">Stage 1 &middot; Today</span>
+            <div class="stg-l">Historical only</div>
+            <div class="ab"><b style="color:var(--blue-tx)">Dashboard as the Mirror</b><span>Shows what already happened &mdash; balances, transactions, aging invoices</span></div>
+            <div class="si"><div>Company Overview</div><div>Invoice List</div><div>Bank Reconciliation</div></div>
+            <div class="stg-f">Users see the past but can't anticipate the future.</div>
+          </div>
+          <div class="stg-arr">&#x2192;</div>
+          <div class="stg" style="background:var(--green-bg)">
+            <span class="stg-b" style="background:rgba(31,138,76,.1);color:var(--green-tx)">Stage 2 &middot; V1 2026</span>
+            <div class="stg-l">Predictive alerts</div>
+            <div class="ab"><b style="color:var(--green-tx)">Dashboard as the Advisor</b><span>Forecasts cash flow, surfaces alerts, suggests actions</span></div>
+            <div class="si"><div>30-day Forecast</div><div>Shortfall Warnings</div><div>Invoice Reminders</div><div>Payment Opportunities</div></div>
+            <div class="stg-f">Users see what's coming and get nudged to act.</div>
+          </div>
+          <div class="stg-arr">&#x2192;</div>
+          <div class="stg" style="background:var(--lavender)">
+            <span class="stg-b" style="background:rgba(107,79,215,.1);color:var(--purple-tx)">Stage 3 &middot; 2027+</span>
+            <div class="stg-l">Autonomous intelligence</div>
+            <div class="ab"><b style="color:var(--purple-tx)">Dashboard as the Operator</b><span>Executes recommendations autonomously with user consent</span></div>
+            <div class="si"><div>Auto-Reminders</div><div>Smart Payments</div><div>Bank Credit via MitID</div><div>Advisory Reports</div></div>
+            <div class="stg-f">The system acts on behalf of the user &mdash; with trust earned over time.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S5 TIMELINE -->
+      <div class="s s5" data-s="4">
+        <div class="st" style="font-size:clamp(19px,2.2vw,28px)">Experiment timeline &mdash; reducing uncertainty before building</div>
+        <div class="ss">Three critical hypotheses across desirability, feasibility, and viability &mdash; each with lean tests designed to derisk the investment.</div>
+        <div class="tl">
+          <div class="tc" style="border-top-color:var(--green-tx)"><div class="tc-p">Week 1&ndash;2</div><span class="tag" style="background:var(--green-bg);color:var(--green-tx)">Desirability</span><div class="tc-t">Prototype usability test</div><div class="tc-b">Show interactive prototype to 8&ndash;10 business owners. Observe: do they understand the forecast? Do they click recommendations?</div><div class="th" style="background:var(--green-bg)"><div class="th-l" style="color:var(--green-tx)">Success threshold</div><div class="th-v">&gt;40% click a recommendation</div></div></div>
+          <div class="tc" style="border-top-color:var(--green-tx)"><div class="tc-p">Week 1</div><span class="tag" style="background:var(--green-bg);color:var(--green-tx)">Desirability</span><div class="tc-t">Fake door test</div><div class="tc-b">Add &lsquo;Likviditetsoverblik&rsquo; link in Rapporter sidebar. Measure click-through and beta sign-up rate.</div><div class="th" style="background:var(--green-bg)"><div class="th-l" style="color:var(--green-tx)">Success threshold</div><div class="th-v">&gt;5% of visitors click</div></div></div>
+          <div class="tc" style="border-top-color:var(--blue-tx)"><div class="tc-p">Week 2&ndash;4</div><span class="tag" style="background:var(--blue-bg);color:var(--blue-tx)">Feasibility</span><div class="tc-t">Backtest historical data</div><div class="tc-b">Pull 12 months of invoice + bank data for 50 anonymized SME accounts. Compare predicted vs. actual at 30/60/90 days.</div><div class="th" style="background:var(--blue-bg)"><div class="th-l" style="color:var(--blue-tx)">Success threshold</div><div class="th-v">Within 15% for 70% of accounts</div></div></div>
+          <div class="tc" style="border-top-color:var(--purple-tx)"><div class="tc-p">Week 1&ndash;2</div><span class="tag" style="background:var(--purple-bg);color:var(--purple-tx)">Viability</span><div class="tc-t">Willingness-to-pay survey</div><div class="tc-b">Survey 200 users with prototype screenshots. Test 3 price points for predictive cash flow alerts.</div><div class="th" style="background:var(--purple-bg)"><div class="th-l" style="color:var(--purple-tx)">Success threshold</div><div class="th-v">&gt;25% would pay DKK 99/mo</div></div></div>
+        </div>
+      </div>
+
+      <!-- S6 RISKS -->
+      <div class="s s6" data-s="5">
+        <div class="st" style="font-size:clamp(19px,2.2vw,28px)">What we don't know yet</div>
+        <div class="ss">Honest uncertainty is a feature of this vision, not a weakness.</div>
+        <div class="rlay">
+          <div class="rg">
+            <div class="rc" style="border-top-color:var(--purple-tx)"><h5>User trust in AI</h5><p>Will users trust and act on AI-generated recommendations?</p><div class="rc-m" style="background:var(--lavender);color:var(--purple-tx)">Mitigation: Prototype usability testing with real BOs</div></div>
+            <div class="rc" style="border-top-color:var(--blue-tx)"><h5>Forecast accuracy</h5><p>Can we predict within 15% using existing data alone?</p><div class="rc-m" style="background:var(--blue-bg);color:var(--blue-tx)">Mitigation: Backtest on 50 anonymized accounts</div></div>
+            <div class="rc" style="border-top-color:var(--accent)"><h5>Bank integration</h5><p>MitID consent flow may require 12+ month partnerships.</p><div class="rc-m" style="background:var(--peach);color:var(--amber-tx)">Mitigation: Scope V1 without bank integration</div></div>
+            <div class="rc" style="border-top-color:var(--green-tx)"><h5>Revenue vs. retention</h5><p>Premium upsell or retention play? Wrong framing changes everything.</p><div class="rc-m" style="background:var(--green-bg);color:var(--green-tx)">Mitigation: WTP survey + beta cohort tracking</div></div>
+          </div>
+          <div class="qp">
+            <h4>&#x1F4A1; Open questions worth a room</h4>
+            <div class="qi"><div class="qi-d"></div><p>What assumption feels riskiest &mdash; trust, accuracy, or business value?</p></div>
+            <div class="qi"><div class="qi-d"></div><p>If we could only test one thing in 2 weeks, which creates the most valuable learning?</p></div>
+            <div class="qi"><div class="qi-d"></div><p>Is an inaccurate forecast acceptable if it drives engagement?</p></div>
+            <div class="qi"><div class="qi-d"></div><p>Does sending emails from accounting software cross a product boundary?</p></div>
+            <div class="qi"><div class="qi-d"></div><p>Is the AO advisory use case strong enough to justify the investment alone?</p></div>
+            <div class="qi"><div class="qi-d"></div><p>If users don't engage with the full dashboard, does that kill the idea &mdash; or redirect it?</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S7 CLOSING -->
+      <div class="s s7" data-s="6">
+        <h2>What happens next?</h2>
+        <p>The prototype exists. The hypotheses are framed. The question isn't whether to build &mdash; it's what to test first.</p>
+        <div class="ns">
+          <div class="ni"><span class="ni-i">&#x2705;</span><div><b>If desirability confirms</b><span>Invest in the real forecast engine. Prioritise the invoice reminder flow.</span></div></div>
+          <div class="ni"><span class="ni-i">&#x1F4CA;</span><div><b>If feasibility confirms</b><span>Move to production data pipeline. Start with 30-day forecast only.</span></div></div>
+          <div class="ni"><span class="ni-i">&#x1F4B0;</span><div><b>If viability confirms</b><span>Build business case for premium tier. Explore bank partnerships.</span></div></div>
+        </div>
+        <a class="cta" href="https://tobiasjensen-maker.github.io/liquidity-management/" target="_blank">View the prototype on GitHub &#x2192;</a>
+      </div>
+
+    </div><!-- /frame -->
+  </div><!-- /frame-wrap -->
+
+  <!-- TAB BAR -->
+  <div class="tabs" id="tabs"></div>
+</div>
+
+<script>
+const N=['Cover','The opportunity','Use cases','Three stages','Experiments','Open questions','Next steps'];
+const S=document.querySelectorAll('.s');
+const T=document.getElementById('tabs');
+let c=0,tot=S.length;
+
+N.forEach((n,i)=>{
+  const b=document.createElement('button');
+  b.className='tab'+(i===0?' on':'');
+  b.innerHTML=`<span class="n">${String(i+1).padStart(2,'0')}</span>${n}`;
+  b.onclick=()=>goTo(i);
+  T.appendChild(b);
+});
+
+function upd(){T.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('on',i===c));const a=T.querySelector('.tab.on');if(a)a.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'})}
+
+function goTo(n){
+  if(n<0||n>=tot||n===c)return;
+  S[c].classList.remove('on');S[c].classList.add('out');
+  setTimeout(()=>S[c===n?c:c].classList.remove('out'),400);
+  const prev=c;c=n;S[c].classList.add('on');upd();
+  setTimeout(()=>S[prev].classList.remove('out'),400);
+}
+function go(d){goTo(c+d)}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();go(1)}
+  if(e.key==='ArrowLeft'){e.preventDefault();go(-1)}
+});
+let tx=0;
+document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX});
+document.addEventListener('touchend',e=>{const d=tx-e.changedTouches[0].clientX;if(Math.abs(d)>50)go(d>0?1:-1)});
+</script>
+</body>
+</html>
