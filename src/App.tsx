@@ -1248,21 +1248,21 @@ export default function App() {
                     <Navigation2>
                         <Navigation2.Section>
                             <Navigation2.Group heading="Dashboards" defaultExpanded>
+                                <Navigation2.Link href="/rapporter/overblik">Overblik</Navigation2.Link>
                                 <Navigation2.Link
                                     href="#"
                                     active={activeView === 'dashboard'}
                                     onClick={(e: React.MouseEvent) => { e.preventDefault(); setActiveView('dashboard'); }}
                                 >
-                                    Likviditetsoverblik
+                                    Likviditet
                                 </Navigation2.Link>
                                 <Navigation2.Link
                                     href="#"
                                     active={activeView === 'presentation'}
                                     onClick={(e: React.MouseEvent) => { e.preventDefault(); setActiveView('presentation'); }}
                                 >
-                                    Presentation
+                                    Præsentation
                                 </Navigation2.Link>
-                                <Navigation2.Link href="/rapporter/overblik">Overblik</Navigation2.Link>
                             </Navigation2.Group>
                             <Navigation2.Group heading="Regnskab" defaultExpanded>
                                 <Navigation2.Link href="/rapporter/saldobalance">Saldobalance</Navigation2.Link>
@@ -1287,7 +1287,7 @@ export default function App() {
                         {/* Page Header */}
                         <div className="flex items-center justify-between mb-4">
                             <div>
-                                <h1 className="text-2xl font-bold text-black m-0">Likviditetsoverblik</h1>
+                                <h1 className="text-2xl font-bold text-black m-0">Likviditet</h1>
                                 <p className="text-sm text-grey-600 mt-1 mb-4">
                                     Intelligent likviditetsprognose baseret på dine data i e-conomic
                                 </p>
