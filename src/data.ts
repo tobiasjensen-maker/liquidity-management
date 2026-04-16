@@ -68,24 +68,38 @@ let balance = 285000;
 // Day -5 to -1: actual historical (slight decline)
 for (let i = 0; i < 6; i++) {
     cashFlowPattern.push(Math.round(balance));
-    balance -= 1500 + Math.random() * 1000;
+    balance -= 2000;
 }
 // Day 0+: projected future
+// Events are applied at the START of that day
 const events: Record<number, number> = {
     2: -145000,  // Løn
     5: 67500,    // Faktura Møllers Transport
     7: -28000,   // Husleje
     10: 95000,   // Faktura Aarhus Kommune
     12: -35600,  // Software-licenser
+    14: -45000,  // Leverandørbetaling
     15: 23400,   // Faktura Grøn Energi
-    18: -52000,  // Moms
+    18: -52000,  // Moms (kvartalsvis)
+    20: -18000,  // Forsikring
+    25: 42000,   // Faktura indbetaling
+    30: -145000, // Løn maj
+    32: 85000,   // Stor faktura indbetaling
+    35: -28000,  // Husleje
+    45: 55000,   // Indbetaling
+    50: -35000,  // Leverandør
+    60: -145000, // Løn juni
+    62: 95000,   // Indbetaling
+    65: -28000,  // Husleje
+    75: 70000,   // Indbetaling
+    90: -145000, // Løn juli
 };
 for (let d = 0; d <= 90; d++) {
     if (events[d]) {
         balance += events[d];
     }
-    // Small daily drift (minor expenses)
-    balance -= 800 + Math.sin(d * 0.3) * 500;
+    // Small daily drift
+    balance -= 500;
     cashFlowPattern.push(Math.round(balance));
 }
 

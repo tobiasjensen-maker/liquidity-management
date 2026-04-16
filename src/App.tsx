@@ -182,8 +182,12 @@ function ForecastChart() {
         event: eventByLabel[p.label] || null,
     }));
 
-    const formatYAxis = (value: number) =>
-        value >= 1000 ? `${(value / 1000).toFixed(0)}k` : String(value);
+    const formatYAxis = (value: number) => {
+        if (value === 0) return '0';
+        const abs = Math.abs(value);
+        const label = abs >= 1000 ? `${(abs / 1000).toFixed(0)}k` : String(abs);
+        return value < 0 ? `-${label}` : label;
+    };
 
     return (
         <Card title="Likviditetsforecast">
@@ -220,9 +224,10 @@ function ForecastChart() {
                     >
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#EBEBEB" />
                         <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="#ACACAC" />
-                        <YAxis tickFormatter={formatYAxis} tick={{ fontSize: 11 }} stroke="#ACACAC" width={50} />
+                        <YAxis tickFormatter={formatYAxis} tick={{ fontSize: 11 }} stroke="#ACACAC" width={55} domain={['auto', 'auto']} />
                         <RechartsTooltip content={<ChartTooltipContent />} />
                         <Legend wrapperStyle={{ fontSize: 12, display: 'flex', justifyContent: 'center' }} />
+                        <ReferenceLine y={0} stroke="#1a1a1a" strokeWidth={1} />
                         <ReferenceLine y={50000} stroke="#CE3F42" strokeDasharray="6 4" strokeWidth={2} label={{ value: 'Tærskel: 50k', position: 'right', fontSize: 11, fill: '#CE3F42' }} />
                         <Area
                             type="monotone"
