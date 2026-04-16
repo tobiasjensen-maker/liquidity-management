@@ -1222,6 +1222,7 @@ function OpportunitiesPanel() {
 // --- Main App ---
 export default function App() {
     const [period, setPeriod] = useState('30');
+    const [activeView, setActiveView] = useState<'dashboard' | 'presentation'>('dashboard');
 
     return (
         <Layout>
@@ -1247,8 +1248,21 @@ export default function App() {
                     <Navigation2>
                         <Navigation2.Section>
                             <Navigation2.Group heading="Dashboards" defaultExpanded>
+                                <Navigation2.Link
+                                    href="#"
+                                    active={activeView === 'dashboard'}
+                                    onClick={(e: React.MouseEvent) => { e.preventDefault(); setActiveView('dashboard'); }}
+                                >
+                                    Likviditetsoverblik
+                                </Navigation2.Link>
+                                <Navigation2.Link
+                                    href="#"
+                                    active={activeView === 'presentation'}
+                                    onClick={(e: React.MouseEvent) => { e.preventDefault(); setActiveView('presentation'); }}
+                                >
+                                    Presentation
+                                </Navigation2.Link>
                                 <Navigation2.Link href="/rapporter/overblik">Overblik</Navigation2.Link>
-                                <Navigation2.Link href="/rapporter/likviditet" active>Likviditetsoverblik</Navigation2.Link>
                             </Navigation2.Group>
                             <Navigation2.Group heading="Regnskab" defaultExpanded>
                                 <Navigation2.Link href="/rapporter/saldobalance">Saldobalance</Navigation2.Link>
@@ -1268,6 +1282,7 @@ export default function App() {
                 </Layout.Sidebar>
                 <Layout.Content>
                     <Layout.Page>
+                        {activeView === 'dashboard' && (
                         <div className="flex flex-col w-full overflow-y-auto p-6">
                         {/* Page Header */}
                         <div className="flex items-center justify-between mb-4">
@@ -1317,6 +1332,17 @@ export default function App() {
                             </div>
                         </div>
                         </div>
+                        )}
+
+                        {activeView === 'presentation' && (
+                        <div className="flex flex-col w-full h-full">
+                            <iframe
+                                src={`${import.meta.env.BASE_URL}presentation.html`}
+                                className="w-full h-full border-0"
+                                title="Cash Flow Intelligence — Presentation"
+                            />
+                        </div>
+                        )}
                     </Layout.Page>
                 </Layout.Content>
             </div>
